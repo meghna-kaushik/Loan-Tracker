@@ -1,12 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { supabase, supabaseAdmin } from '../services/supabase';
 
-// Helper: convert phone number to fake email (avoids Twilio requirement)
-function phoneToEmail(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '').replace(/^91/, '');
-  return `${cleaned}@loanapp.internal`;
-}
-
 const router = Router();
 
 // POST /api/auth/login
@@ -19,11 +13,12 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Use fake email trick — no Twilio/SMS needed
-    const fakeEmail = phoneToEmail(phone);
+    // Supabase Auth phone login uses phone + password
+    // Phone must be in E.164 format for Supabase
+    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: fakeEmail,
+      phone: formattedPhone,
       password,
     });
 

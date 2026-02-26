@@ -2,11 +2,10 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function AgentLayout() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-surface-1 flex flex-col">
-      {/* Top bar */}
       <header className="bg-white border-b border-surface-3 px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
@@ -22,12 +21,10 @@ export default function AgentLayout() {
         </div>
       </header>
 
-      {/* Main content */}
       <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
 
-      {/* Bottom nav */}
       <nav className="bg-white border-t border-surface-3 flex sticky bottom-0">
         <NavLink
           to="/agent/new-visit"
@@ -38,8 +35,7 @@ export default function AgentLayout() {
           }
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M12 4v16m8-8H4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           New Visit
         </NavLink>
