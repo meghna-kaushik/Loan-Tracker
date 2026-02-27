@@ -5,6 +5,9 @@ import { useAuth } from '../../hooks/useAuth';
 
 type Step = 'loan-entry' | 'visit-form';
 
+// Detect mobile device
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 interface GeoState {
   status: 'idle' | 'requesting' | 'granted' | 'denied' | 'error';
   latitude: number | null;
@@ -341,9 +344,21 @@ export default function NewVisit() {
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               <div>
-                <p className="text-red-700 font-semibold">Location access is required to submit visit.</p>
-                <button onClick={requestGeo} className="text-xs text-red-700 underline mt-1">
-                  Try again
+                <p className="text-red-700 font-semibold">Location access blocked</p>
+                <p className="text-red-600 text-xs mt-1">
+                  You have blocked location access. To fix this:
+                </p>
+                <p className="text-red-600 text-xs mt-0.5">
+                  {isMobile
+                    ? '1. Open browser Settings → Site Settings → Location → Allow this site'
+                    : '1. Click the 🔒 lock icon in your browser address bar → Allow Location'}
+                </p>
+                <p className="text-red-600 text-xs">2. Then refresh this page</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-2 text-xs bg-red-600 text-white px-3 py-1.5 rounded-lg font-semibold"
+                >
+                  Refresh Page
                 </button>
               </div>
             </>
@@ -476,20 +491,22 @@ export default function NewVisit() {
 
             {photos.length < 5 && (
               <div className="flex gap-2">
-                {/* Camera capture */}
-                <button
-                  type="button"
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="flex-1 flex items-center justify-center gap-2 border-2 border-dashed border-brand-300 rounded-xl py-3 text-sm font-semibold text-brand-600 hover:bg-brand-50 transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Camera
-                </button>
-                {/* File upload */}
+                {/* Camera capture — only on mobile */}
+                {isMobile && (
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="flex-1 flex items-center justify-center gap-2 border-2 border-dashed border-brand-300 rounded-xl py-3 text-sm font-semibold text-brand-600 hover:bg-brand-50 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Camera
+                  </button>
+                )}
+                {/* File upload — always shown */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -499,7 +516,7 @@ export default function NewVisit() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Gallery
+                  {isMobile ? 'Gallery' : 'Upload Photo'}
                 </button>
               </div>
             )}
