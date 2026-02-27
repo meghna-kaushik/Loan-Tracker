@@ -28,6 +28,8 @@ export interface Visit {
   longitude: number;
   address: string;
   visited_at: string;
+  ptp_date: string | null;
+  ptp_amount: number | null;
 }
 
 export interface Profile {

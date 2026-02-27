@@ -157,6 +157,14 @@ export default function AllVisits() {
 
                 <p className="text-sm text-gray-700 mb-3 bg-surface-1 rounded-lg px-3 py-2">{v.comments}</p>
 
+                {/* PTP details */}
+                {v.status === 'PTP' && v.ptp_date && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3 text-xs text-blue-800 flex gap-4">
+                    <span>📅 PTP Date: <strong>{new Date(v.ptp_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</strong></span>
+                    <span>💰 Amount: <strong>₹{v.ptp_amount?.toLocaleString('en-IN')}</strong></span>
+                  </div>
+                )}
+
                 <div className="flex items-start gap-1.5 text-xs text-gray-500 mb-3">
                   <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

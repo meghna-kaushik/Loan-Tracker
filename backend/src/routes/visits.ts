@@ -18,6 +18,8 @@ router.post('/', requireAuth, requireRole('field_agent'), async (req: Request, r
       latitude,
       longitude,
       address,
+      ptp_date,
+      ptp_amount,
     } = req.body;
 
     const agent = req.user!;
@@ -37,6 +39,18 @@ router.post('/', requireAuth, requireRole('field_agent'), async (req: Request, r
     if (!status || !VALID_STATUSES.includes(status)) {
       res.status(400).json({ error: `Status must be one of: ${VALID_STATUSES.join(', ')}` });
       return;
+    }
+
+    // PTP-specific validation
+    if (status === 'PTP') {
+      if (!ptp_date || typeof ptp_date !== 'string' || ptp_date.trim().length === 0) {
+        res.status(400).json({ error: 'PTP Date is required when status is PTP' });
+        return;
+      }
+      if (!ptp_amount || isNaN(Number(ptp_amount)) || Number(ptp_amount) <= 0) {
+        res.status(400).json({ error: 'PTP Amount must be a positive number when status is PTP' });
+        return;
+      }
     }
 
     if (!comments || typeof comments !== 'string' || comments.trim().length === 0) {
@@ -76,6 +90,8 @@ router.post('/', requireAuth, requireRole('field_agent'), async (req: Request, r
         latitude,
         longitude,
         address: address.trim(),
+        ptp_date: status === 'PTP' ? ptp_date.trim() : null,
+        ptp_amount: status === 'PTP' ? Number(ptp_amount) : null,
       })
       .select()
       .single();
